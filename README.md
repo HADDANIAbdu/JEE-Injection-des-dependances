@@ -209,3 +209,51 @@ le résultat :
 <div style="display: flex; justify-content: center;">
   <img src="/assets/Dynamic_constructeur.png" width="300">
 </div>
+
+### 🎯 En utilisant le Framework Spring Version XML
+Il faut d'abord ajouter la dépendance de spring context sur le fichier pom.xml, 
+```xml
+<dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>6.1.3</version>
+        </dependency>
+</dependencies>
+```
+pour qu'on puissent utiliser la classe **ClassPathXmlApplicationContext** de spring en passant le nom de fichier de configuration
+en paramètre qui va etre de type xml dans ce cas **config.xml** .
+
+Le fichier config.xml contient la liste des objets (beans) que Spring va créer et gérer automatiquement lors du démarrage de l'application.
+L'injection des dépendances se fait grâce au tag **<property>**. Cela signifie que Spring va chercher dans la classe **IMetierImpl** une méthode 
+**setIdao(IDao idao)**. Ensuite, il va appeler cette méthode pour donner au bean metier une instance du bean dao.
+
+Autrement dit, Spring relie automatiquement les objets entre eux, sans qu'on ait besoin de les créer manuellement dans le code.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="dao" class="dao.IDaoImpl"></bean>
+    <bean id="metier" class="metier.IMetierImpl">
+        <property name="Idao" ref="dao"></property>
+    </bean>
+</beans>
+```
+ensuite on va crée et initialise le conteneur Spring en chargeant la configuration XML (config.xml).
+Spring scanne et instancie tous les beans définis dans config.xml dès cette étape. après, on demande à Spring de nous fournir
+une instance du bean nommé "metier", Une fois le bean récupéré, on appelle la méthode **calcul()** pour afficher le résultat.
+```java
+public class PresentationXML {
+    public static void main(String[] args) {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("config.xml");
+        IMetier metier = appContext.getBean("metier", IMetier.class);
+        System.out.println("Temperature xml : "+ metier.calcul() +" °C");
+    }
+}
+```
+le résultat : 
+<div style="display: flex; justify-content: center;">
+  <img src="/assets/spring_xml.png" width="300">
+</div>
