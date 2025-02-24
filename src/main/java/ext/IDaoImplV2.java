@@ -1,6 +1,8 @@
-package dao;
+package ext;
 
-public class IDaoImplV2 implements IDao{
+import dao.IDao;
+
+public class IDaoImplV2 implements IDao {
     @Override
     public double getData(){
         double temperature = 67;
