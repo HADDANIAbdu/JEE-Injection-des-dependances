@@ -75,4 +75,6 @@ public class PresentationV1 {
 ```
 
 maintenant on peut calculer la temperature sans aucun exception , et voici le résultat :
-
+<div style="display: flex; justify-content: center;">
+  <img src="/assets/result.png" width="700">
+</div>
