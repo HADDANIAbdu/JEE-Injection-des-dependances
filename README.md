@@ -131,3 +131,81 @@ le résultat :
 <div style="display: flex; justify-content: center;">
   <img src="/assets/result_const.png" width="300">
 </div>
+
+### 🎯 Par instanciation dynamique
+Pour cette partie on créer une nouvelle classe PresentationV2 pour faire l'injection des dépendances par l'instanciation dynamique en utilisant un fichier de configuration
+config.txt qui va contenir les différents classe à utiliser pour garantir fermer la classe de presentation aussi à la modification .
+
+le fichier config.txt contient la classe IDaoImplV2 pour la version web service, et la classe IMetierImpl qui implémente l'interface IMetier:
+```txt
+ext.IDaoImplV2
+metier.IMetierImpl
+```
+dans la classe PresentationV2, on va essayer d'injecter les dépendances par l'instanciation dynamique via le setter et le constrocteur.
+###### en utilisant le setter : 
+le code de la classe vise à lire d'abord la classe qui implémente l'interface IDao depuis le fichier config.txt, et de meme la classe IMetierImpl et utiliser la
+méthode **getConstructor().newInstance()** pour créer une instance de la classe IMetierImpl, et alors utiliser la classe Method pour utiliser la méthode setIDao 
+en spécifiant à la méthode **getDeclaredMethod()** le nom de la méthode à chercher et le type de l'argument .
+en fin, utiliser la méthode invoke pour exécuter la méthode sur l'objet Imetier en passant le paramètre Idao .
+```java
+public class PresentationV2 {
+    public static void main(String[] args) {
+        try{
+            Scanner sc = new Scanner(new File("config.txt"));
+            String daoClassName = sc.nextLine();
+            Class cDao = Class.forName(daoClassName);
+            IDao Idao = (IDao) cDao.getConstructor().newInstance();
+
+            String metierClassName = sc.nextLine();
+            Class cMetier = Class.forName(metierClassName);
+            //utiliser le constructeur sans paramètre
+            IMetier Imetier = (IMetier) cMetier.getConstructor().newInstance();
+
+            //utiliser la méthode setIDao pour l'injection des dépendances
+            Method setIdao = cMetier.getDeclaredMethod("setIdao", IDao.class);
+            setIdao.invoke(Imetier, Idao);
+            System.out.println("Temperature : "+Imetier.calcul()+" °C");
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
+le résultat :
+<div style="display: flex; justify-content: center;">
+  <img src="/assets/Dynamic_setter.png" width="300">
+</div>
+
+###### en utilisant le constructeur :
+l'utilisation de constructeur et plus facile, on specifiant juste le type de paramètre à passé aux constructeur et le paramètre lui meme , qui est Idao.
+```java
+public class PresentationV2 {
+    public static void main(String[] args) {
+        try{
+            Scanner sc = new Scanner(new File("config.txt"));
+            String daoClassName = sc.nextLine();
+            Class cDao = Class.forName(daoClassName);
+            IDao Idao = (IDao) cDao.getConstructor().newInstance();
+
+            String metierClassName = sc.nextLine();
+            Class cMetier = Class.forName(metierClassName);
+            //utiliser le constructeur sans paramètre
+            //IMetier Imetier = (IMetier) cMetier.getConstructor().newInstance();
+
+            //utiliser la méthode setIDao pour l'injection des dépendances
+            //Method setIdao = cMetier.getDeclaredMethod("setIdao", IDao.class);
+            //setIdao.invoke(Imetier, Idao);
+
+            //utiliser directement le constructeur avec paramètres pour DI
+            IMetier Imetier = (IMetier) cMetier.getConstructor(IDao.class).newInstance(Idao);
+            System.out.println("Temperature Constructeur : "+Imetier.calcul()+" °C");
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
+le résultat :
+<div style="display: flex; justify-content: center;">
+  <img src="/assets/Dynamic_constructeur.png" width="300">
+</div>
