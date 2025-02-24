@@ -257,3 +257,31 @@ le résultat :
 <div style="display: flex; justify-content: center;">
   <img src="/assets/spring_xml.png" width="300">
 </div>
+
+### 🎯 En utilisant le Framework Spring Version Annotation
+D'abord Il faut créer un nouveau package qui va servir à la configuration de l'application .
+Ce code définit une configuration Spring en utilisant l'annotation @Configuration, indiquant que cette classe sert à configurer l'application. 
+L'annotation **@ComponentScan(basePackages = {"dao", "metier"})** demande à Spring de scanner automatiquement les packages "ext" et "metier" 
+à la recherche de classes annotées avec **@Component**, **@Service**, **@Repository** ou **@Controller**, et de les enregistrer comme beans 
+dans le conteneur Spring.
+Ainsi, Spring instancie et gère ces objets sans qu'on ait besoin de les définir dans un fichier XML.
+```java
+@Configuration
+@ComponentScan(basePackages = {"ext", "metier"})
+public class AppConfig { }
+```
+Ensite sur la classe PresentationAnnotations, on initialise Spring avec **AppConfig**, récupère le bean **IMetier** et exécute sa méthode **calcul()**
+pour afficher la température .
+```java
+public class presentationAnnotations {
+    public static void main(String[] args) {
+        ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
+        IMetier metier = appContext.getBean(IMetier.class);
+        System.out.println("Temperature Annotation : "+ metier.calcul() +" °C");
+    }
+}
+```
+le résultat : 
+<div style="display: flex; justify-content: center;">
+  <img src="/assets/spring_annotation.png" width="300">
+</div>
