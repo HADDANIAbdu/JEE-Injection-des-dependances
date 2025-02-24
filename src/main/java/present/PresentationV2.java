@@ -18,13 +18,15 @@ public class PresentationV2 {
             String metierClassName = sc.nextLine();
             Class cMetier = Class.forName(metierClassName);
             //utiliser le constructeur sans paramètre
-            IMetier Imetier = (IMetier) cMetier.getConstructor().newInstance();
+            //IMetier Imetier = (IMetier) cMetier.getConstructor().newInstance();
 
             //utiliser la méthode setIDao pour l'injection des dépendances
-            Method setIdao = cMetier.getDeclaredMethod("setIdao", IDao.class);
-            setIdao.invoke(Imetier, Idao);
+            //Method setIdao = cMetier.getDeclaredMethod("setIdao", IDao.class);
+            //setIdao.invoke(Imetier, Idao);
 
-            System.out.println("Temperature : "+Imetier.calcul()+" °C");
+            //utiliser directement le constructeur avec paramètres pour DI
+            IMetier Imetier = (IMetier) cMetier.getConstructor(IDao.class).newInstance(Idao);
+            System.out.println("Temperature Constructeur : "+Imetier.calcul()+" °C");
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
