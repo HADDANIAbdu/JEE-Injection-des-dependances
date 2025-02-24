@@ -1,6 +1,8 @@
 package metier;
 import dao.IDao;
+import org.springframework.stereotype.Service;
 
+@Service
 public class IMetierImpl implements IMetier{
     private IDao Idao; //le couplage faible
 
